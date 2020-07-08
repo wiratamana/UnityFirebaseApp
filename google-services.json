@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "408744286373",
+    "firebase_url": "https://fir-app-cfe52.firebaseio.com",
+    "project_id": "fir-app-cfe52",
+    "storage_bucket": "fir-app-cfe52.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408744286373:android:7e5f5c6da58837f9d3d54c",
+        "android_client_info": {
+          "package_name": "com.tamana.firebaseapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408744286373-8tvga1sj38p47porijuqbg7mjuja754f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9mI-TQa3v5Nwe4NHJ4KJw_F6zPMO-5Cc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408744286373-8tvga1sj38p47porijuqbg7mjuja754f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

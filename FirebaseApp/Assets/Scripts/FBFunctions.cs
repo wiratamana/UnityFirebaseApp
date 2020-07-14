@@ -65,4 +65,10 @@ public static class FBFunctions
         const string FUNCTION_NAME = "createEmptyUser";
         return await CallAsyncTask<string>(FUNCTION_NAME, null, TOKYO);
     }
+
+    public static async Task<Dictionary<string, string>> SendMessageAsyncTask(Dictionary<string, object> data)
+    {
+        const string FUNCTION_NAME = "sendMessage";
+        return await CallAsyncTask<Dictionary<string, string>>(FUNCTION_NAME, data, TOKYO);
+    }
 }

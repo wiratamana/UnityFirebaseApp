@@ -1,38 +1,133 @@
-﻿using System;
+﻿using Firebase.Firestore;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Tamana;
+
 public static partial class FBSDK
 {
     public static class FriendsManager
     {
+        private readonly struct Metadata
+        {
+            public readonly DocumentReference documentReference;
+            public readonly string uniqueID;
+            public readonly List<string> friendList;
+            public readonly List<string> friendRequest;
+
+            public Metadata(DocumentReference documentReference, string uniqueID, List<string> friendList, List<string> friendRequest)
+            {
+                this.documentReference = documentReference;
+                this.uniqueID = uniqueID;
+                this.friendList = friendList;
+                this.friendRequest = friendRequest;
+            }
+
+            public bool IsNull => documentReference == null;
+            public static Metadata Null => new Metadata(null, null, null, null);
+        }
+
+        /// <summary>
+        /// transaction, myMetadata, friendMetadata (can null)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="playerUniqueID"></param>
+        /// <param name="cb"></param>
+        /// <returns></returns>
+        private static async Task<T> RunFriendTransactionAsyncTask<T>(string playerUniqueID, Func<Transaction, Metadata, Metadata, T> cb)
+        {
+#if FIRESTORE_TRANSACTION
+            var db = FirebaseFirestore.DefaultInstance;
+            var userUniqueID = UserData.UserUniqueID;
+            DocumentReference myDoc = MyDocuments;
+            DocumentReference friendDoc = string.IsNullOrEmpty(playerUniqueID) ? null : GetDocuments(playerUniqueID);
+
+            return await db.RunTransactionAsync(async transaction =>
+            {
+                try
+                {
+                    DocumentSnapshot mySnapshot = await transaction.GetSnapshotAsync(myDoc);
+                    DocumentSnapshot friendSnapshot = friendDoc == null ? null : await transaction.GetSnapshotAsync(friendDoc);
+
+                    List<string> myselfReq = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+                    List<string> myselfList = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+
+                    List<string> friendList = friendSnapshot?.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+                    List<string> friendReq = friendSnapshot?.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+
+                    var myMetadata = new Metadata(myDoc, userUniqueID, myselfList, myselfReq);
+                    var friendMetadata = friendDoc == null ? Metadata.Null : new Metadata(friendDoc, playerUniqueID, friendList, friendReq);
+
+                    return cb == null ? default : cb.Invoke(transaction, myMetadata, friendMetadata);
+                }
+                catch
+                {
+                    return default;
+                }                
+            });
+#else
+            return default;
+#endif
+        }
+
+
         public static async Task<bool> AcceptWaitingRequestAsyncTask(string playerUniqueID)
         {
             try
             {
-                var mySnapshot = await MyDocuments.GetSnapshotAsync();
-
-                var friendRequestResult = mySnapshot.TryGetValue(UserData.FIELD_FRIEND_REQUEST, out List<object> friendRequest);
-                friendRequest.Remove(playerUniqueID);
-
-                var friendListResult = mySnapshot.TryGetValue(UserData.FIELD_FRIEND_LIST, out List<object> friendList);
-                if (friendList == null)
+#if FIRESTORE_TRANSACTION
+                return await RunFriendTransactionAsyncTask(playerUniqueID, (transaction, myMetadata, friendMetadata) =>
                 {
-                    friendList = new List<object>();
-                }
-                friendList.Add(playerUniqueID);
+                    // me : remove req add list
+                    myMetadata.friendRequest.RemoveIfContains(playerUniqueID);
+                    myMetadata.friendList.AddIfNotContains(playerUniqueID);
 
+                    lock (Data)
+                    {
+                        Data.Clear();
+                        Data.Add(UserData.FIELD_FRIEND_REQUEST, myMetadata.friendRequest);
+                        Data.Add(UserData.FIELD_FRIEND_LIST, myMetadata.friendList);
+                    }
 
-                Data.Clear();
-                Data.Add(UserData.FIELD_FRIEND_REQUEST, friendRequest);
-                Data.Add(UserData.FIELD_FRIEND_LIST, friendList);
+                    transaction.Update(myMetadata.documentReference, Data);
 
-                await MyDocuments.UpdateAsync(Data);
+                    // friend : add list only 
+                    friendMetadata.friendList.AddIfNotContains(myMetadata.uniqueID);
+
+                    lock (Data)
+                    {
+                        Data.Clear();
+                        Data.Add(UserData.FIELD_FRIEND_LIST, friendMetadata.friendList);
+                    }
+
+                    transaction.Update(friendMetadata.documentReference, Data);
+
+                    return true;
+                });
+#else
+                var mySnapshot = await MyDocuments.GetSnapshotAsync();
+                var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
+
+                var myRequest = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+                var myFriendList = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+                var friendFriendList = friendSnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+
+                myRequest.RemoveIfContains(playerUniqueID);
+                myFriendList.AddIfNotContains(playerUniqueID);
+                friendFriendList.AddIfNotContains(UserData.UserUniqueID);
+
+                var batch = FirebaseFirestore.DefaultInstance.StartBatch();
+                batch.Update(MyDocuments, UserData.FIELD_FRIEND_REQUEST, myRequest);
+                batch.Update(MyDocuments, UserData.FIELD_FRIEND_LIST, myFriendList);
+                batch.Update(GetDocuments(playerUniqueID), UserData.FIELD_FRIEND_LIST, friendFriendList);
+                await batch.CommitAsync();
 
                 return true;
+#endif
             }
             catch
             {
@@ -44,13 +139,33 @@ public static partial class FBSDK
         {
             try
             {
-                var mySnapshot = await MyDocuments.GetSnapshotAsync();
+#if FIRESTORE_TRANSACTION
+                var db = FirebaseFirestore.DefaultInstance;
+                var myDoc = MyDocuments;
 
-                var array = mySnapshot.GetValue<List<object>>(UserData.FIELD_FRIEND_REQUEST);
-                array.Remove(playerUniqueID);
-                await MyDocuments.UpdateAsync(UserData.FIELD_FRIEND_REQUEST, array);
+                return await db.RunTransactionAsync(async transaction => {
+
+                    var mySnapshot = await transaction.GetSnapshotAsync(myDoc);
+                    var array = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+                    array.RemoveIfContains(playerUniqueID);
+                    await MyDocuments.UpdateAsync(UserData.FIELD_FRIEND_REQUEST, array);
+                    return true;
+
+                });
+#else
+                var mySnapshot = await MyDocuments.GetSnapshotAsync();
+                var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
+
+                var myRequest = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+
+                myRequest.RemoveIfContains(playerUniqueID);
+
+                var batch = FirebaseFirestore.DefaultInstance.StartBatch();
+                batch.Update(MyDocuments, UserData.FIELD_FRIEND_REQUEST, myRequest);
+                await batch.CommitAsync();
 
                 return true;
+#endif
             }
             catch
             {
@@ -63,9 +178,10 @@ public static partial class FBSDK
         {
             try
             {
+                var db = FirebaseFirestore.DefaultInstance;
                 var mySnapshot = await MyDocuments.GetSnapshotAsync();
 
-                var friendListResult = mySnapshot.TryGetValue(UserData.FIELD_FRIEND_LIST, out List<object> friendList);
+                var friendListResult = mySnapshot.TryGetValue(UserData.FIELD_FRIEND_LIST, out List<string> friendList);
                 if (friendListResult == false || friendList == null)
                 {
                     return null;
@@ -90,22 +206,35 @@ public static partial class FBSDK
         {
             try
             {
-                var mySnapshot = await MyDocuments.GetSnapshotAsync();
-
-                var friendListResult = mySnapshot.TryGetValue(UserData.FIELD_FRIEND_LIST, out List<object> friendList);
-                if (friendListResult == false || friendList == null || friendList.Count == 0)
+#if FIRESTORE_TRANSACTION
+                return await RunFriendTransactionAsyncTask(playerUniqueID, (transaction, myMetadata, friendMetadata) => 
                 {
-                    return false;
-                }
+                    myMetadata.friendList.RemoveIfContains(friendMetadata.uniqueID);
+                    transaction.Update(myMetadata.documentReference, UserData.FIELD_FRIEND_LIST, myMetadata.friendList);
 
-                if (friendList.Exists(x => x.ToString() == playerUniqueID))
-                {
-                    friendList.Remove(playerUniqueID);
-                    await MyDocuments.UpdateAsync(UserData.FIELD_FRIEND_LIST, friendList);
+                    friendMetadata.friendList.RemoveIfContains(myMetadata.uniqueID);
+                    transaction.Update(friendMetadata.documentReference, UserData.FIELD_FRIEND_LIST, friendMetadata.friendList);
+
                     return true;
-                }               
+                });
+#else
+                var mySnapshot = await MyDocuments.GetSnapshotAsync();
+                var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
 
-                return false;
+                var myFriendList = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+                var friendFriendList = friendSnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+
+                myFriendList.RemoveIfContains(playerUniqueID);
+                friendFriendList.RemoveIfContains(UserData.UserUniqueID);
+
+                var batch = FirebaseFirestore.DefaultInstance.StartBatch();
+                batch.Update(MyDocuments, UserData.FIELD_FRIEND_LIST, myFriendList);
+                batch.Update(GetDocuments(playerUniqueID), UserData.FIELD_FRIEND_LIST, friendFriendList);
+                await batch.CommitAsync();
+
+                return true;
+#endif
+
             }
             catch
             {
@@ -135,20 +264,31 @@ public static partial class FBSDK
             }
         }
 
-        public static async Task<bool> SendRequestFriendAsyncTask(string userUniqueID)
+        public static async Task<bool> SendFriendRequestAsyncTask(string playerUniqueID)
         {
             try
             {
-                var snapshot = await GetDocuments(userUniqueID).GetSnapshotAsync();
-                var waitingRequestIDs = snapshot.GetValue<List<object>>(UserData.FIELD_FRIEND_REQUEST);
-                if (waitingRequestIDs.Contains(userUniqueID))
+#if FIRESTORE_TRANSACTION
+                return await RunFriendTransactionAsyncTask(playerUniqueID, (transaction, myMetadata, friendMetadata) =>
                 {
-                    return true;
-                }
+                    friendMetadata.friendRequest.AddIfNotContains(myMetadata.uniqueID);
+                    transaction.Update(friendMetadata.documentReference, UserData.FIELD_FRIEND_REQUEST, friendMetadata.friendRequest);
 
-                waitingRequestIDs.Add(userUniqueID);
-                await GetDocuments(userUniqueID).UpdateAsync(UserData.FIELD_FRIEND_REQUEST, waitingRequestIDs);
+                    return true;
+                });
+#else
+                var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
+                var friendFriendRequest = friendSnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+                friendFriendRequest.AddIfNotContains(UserData.UserUniqueID);
+
+                var batch = FirebaseFirestore.DefaultInstance.StartBatch();
+                batch.Update(GetDocuments(playerUniqueID), UserData.FIELD_FRIEND_REQUEST, friendFriendRequest);
+                await batch.CommitAsync();
+
+
                 return true;
+#endif
+
             }
             catch
             {

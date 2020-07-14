@@ -10,7 +10,7 @@ public class FriendManager_Search : MonoBehaviour
     public TMP_InputField id;
     public UITweenFormTransition toUserDataAfterSearch;
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Search()
     {
         GetUserInfoData();

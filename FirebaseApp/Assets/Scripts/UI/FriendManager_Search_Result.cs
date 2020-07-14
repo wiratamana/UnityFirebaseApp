@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 public class FriendManager_Search_Result : MonoBehaviour
 {
     public UserInfoUnityUI userinfo;
@@ -20,28 +19,35 @@ public class FriendManager_Search_Result : MonoBehaviour
         userinfo.SetValue(userInfoData);
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Back()
     {
-        backToUserSearch.Execute();
+        BackToUserSearch();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_SendFriendRequest()
     {
         SendRequestFriend();
     }
 
+    private void BackToUserSearch()
+    {
+        backToUserSearch.Execute();
+    }
+
     private async void SendRequestFriend()
     {
-        var result = await FBSDK.FriendsManager.SendRequestFriendAsyncTask(playerUniqueID);
+        ConnectingDialog.Connecting(true);
+        var result = await FBSDK.FriendsManager.SendFriendRequestAsyncTask(playerUniqueID);
         if (result == false)
         {
-            Debug.Log("Failed");
+            ConnectingDialog.Failed();
         }
         else
         {
-            Debug.Log("Success");
+            ConnectingDialog.Success();
+            BackToUserSearch();
         }
     }
 }

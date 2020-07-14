@@ -61,3 +61,4 @@ crashlytics-build.properties
 FirebaseApp/Library/
 FirebaseApp/obj/
 firebase_unity_sdk/
+FirebaseApp/Temp/

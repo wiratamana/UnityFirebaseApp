@@ -28,43 +28,43 @@ public class FriendManager : MonoBehaviour
 
     public UITweenFormTransition toHome;
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_ToWaitingRequest()
     {
         toWaitingRequest.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_ToUserSearch()
     {
         toUserSearch.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_ToFriendsList()
     {
         toFriendsList.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_FromWaitingRequest()
     {
         fromWaitingRequest.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_FromUserSearch()
     {
         fromUserSearch.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_FromFriendsList()
     {
         fromFriendsList.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Back()
     {
         toHome.Execute();

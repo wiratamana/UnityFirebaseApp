@@ -22,7 +22,7 @@ public class RegisterForm : MonoBehaviour
 
     public bool IsOnScreen => Mathf.Approximately(GetComponent<RectTransform>().localPosition.x, 0);
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Next()
     {
         if (string.IsNullOrEmpty(username.text))
@@ -60,7 +60,7 @@ public class RegisterForm : MonoBehaviour
         AccountCreated?.Invoke(username.text, gender, birthday);
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_ChangeGender(int gender)
     {
         if ((Gender)gender == Gender.Female)

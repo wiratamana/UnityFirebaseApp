@@ -20,32 +20,32 @@ public class Home : MonoBehaviour
         }
     }
 
-    [SerializeField] private UserInfoUnityUI userinfo;
+    public UserInfoUnityUI userinfo;
 
-    [SerializeField] private UITweenFormTransition logoutTransition;
-    [SerializeField] private UITweenFormTransition searchUserTransition;
+    public UITweenFormTransition logoutTransition;
+    public UITweenFormTransition searchUserTransition;
 
-    [SerializeField] private UITweenFormTransition toChat;
+    public UITweenFormTransition toChat;
 
     public void SetValue(UserInfoData userInfoData)
     {
         userinfo.SetValue(userInfoData);
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Logout()
     {
         FindObjectOfType<TouchToStart>().ReactivateTouchToStart();
         logoutTransition.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_FriendManager()
     {
         searchUserTransition.Execute();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_ToChat()
     {
         toChat.Execute();

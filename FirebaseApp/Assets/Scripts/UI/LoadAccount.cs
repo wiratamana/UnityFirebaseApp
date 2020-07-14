@@ -10,13 +10,13 @@ public class LoadAccount : MonoBehaviour
     public UITweenFormTransition toTouchToStart;
     public UITweenFormTransition toLoadAccountResult;
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Search()
     {
         ToLoadAccountResult();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Back()
     {
         ToTouchToStart();

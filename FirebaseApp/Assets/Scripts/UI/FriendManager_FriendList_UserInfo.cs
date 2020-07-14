@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class FriendManager_FriendList_UserInfo : UserInfoBase
 {
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Remove()
     {
         Remove();
@@ -24,6 +24,6 @@ public class FriendManager_FriendList_UserInfo : UserInfoBase
         }
 
         ConnectingDialog.Success();
-        DestroyWithAnimation();
+        transition.DestroyWithAnimation();
     }
 }

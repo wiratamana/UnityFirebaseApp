@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public static class Utils
 {
@@ -30,6 +31,44 @@ public static class Utils
         return sb.ToString();
     }
 
+    public static float GetTouchScreenKeyboardHeight(bool includeInput)
+    {
+#if UNITY_ANDROID
+        using (var unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            var unityPlayer = unityClass.GetStatic<AndroidJavaObject>("currentActivity").Get<AndroidJavaObject>("mUnityPlayer");
+            var view = unityPlayer.Call<AndroidJavaObject>("getView");
+
+            var result = 0;
+
+            if (view != null)
+            {
+                using (var rect = new AndroidJavaObject("android.graphics.Rect"))
+                {
+                    view.Call("getWindowVisibleDisplayFrame", rect);
+                    result = Display.main.systemHeight - rect.Call<int>("height");
+                }
+
+                if (includeInput)
+                {
+                    var dialog = unityPlayer.Get<AndroidJavaObject>("mSoftInputDialog");
+                    var decorView = dialog?.Call<AndroidJavaObject>("getWindow").Call<AndroidJavaObject>("getDecorView");
+
+                    if (decorView != null)
+                    {
+                        var decorHeight = decorView.Call<int>("getHeight");
+                        result += decorHeight;
+                    }
+                }
+            }
+
+            return result;
+        }
+#else
+        return 0.0f;
+#endif
+    }
+
     [AttributeUsage(AttributeTargets.Method)]
-    public class InvokeByUnityButton : Attribute { }
+    public class InvokeByUnity : Attribute { }
 }

@@ -7,13 +7,4 @@ using Firebase.Firestore;
 
 public class Wiratamana : MonoBehaviour
 {
-    private void Start()
-    {
-
-    }
-
-    private void OnDestroy()
-    {
-        
-    }
 }

@@ -6,13 +6,13 @@ using TMPro;
 
 public class FriendManager_WaitingRequest_UserInfo : UserInfoBase
 {
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Accept()
     {
         Accept();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Decline()
     {
         Decline();
@@ -28,8 +28,15 @@ public class FriendManager_WaitingRequest_UserInfo : UserInfoBase
             return;
         }
 
+        result = await FBSDK.ChatManager.AddNewChatRoomAsyncTask(UserData.UserUniqueID, playerUniqueID);
+        if (result == false)
+        {
+            ConnectingDialog.Failed();
+            return;
+        }
+
         ConnectingDialog.Success();
-        DestroyWithAnimation();
+        transition.DestroyWithAnimation();
     }
 
     private async void Decline()
@@ -43,6 +50,6 @@ public class FriendManager_WaitingRequest_UserInfo : UserInfoBase
         }
 
         ConnectingDialog.Success();
-        DestroyWithAnimation();
+        transition.DestroyWithAnimation();
     }
 }

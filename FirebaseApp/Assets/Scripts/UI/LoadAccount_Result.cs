@@ -17,13 +17,13 @@ public class LoadAccount_Result : MonoBehaviour
         userinfo.SetValue(userInfoData);
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Back()
     {
         Back();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_LoadAccount()
     {
         LoadAccount();

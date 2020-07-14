@@ -12,7 +12,7 @@ public class TouchToStart : MonoBehaviour
     public UITweenFormTransition fromTitleToHome;
     public TextMeshProUGUI UniqueIDText;
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_Login()
     {
         StopCoroutine(PingPong());
@@ -21,7 +21,7 @@ public class TouchToStart : MonoBehaviour
         LoginProcess();
     }
 
-    [Utils.InvokeByUnityButton]
+    [Utils.InvokeByUnity]
     public void OnClick_LoadAccount()
     {
         LoadAccount();

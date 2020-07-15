@@ -64,6 +64,10 @@ public class RegisterForm : MonoBehaviour
         AccountCreated?.Invoke(username.text, gender, birthday);
     }
 
+    /// <summary>
+    /// 性別を変更する。
+    /// </summary>
+    /// <param name="gender">１は女性、２は男性</param>
     [Utils.InvokeByUnity]
     public void OnClick_ChangeGender(int gender)
     {

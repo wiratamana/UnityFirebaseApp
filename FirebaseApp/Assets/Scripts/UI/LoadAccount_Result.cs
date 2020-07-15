@@ -22,12 +22,18 @@ public class LoadAccount_Result : MonoBehaviour
         userinfo.SetValue(userInfoData);
     }
 
+    /// <summary>
+    /// アカウント検索画面に戻る。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Back()
     {
         Back();
     }
 
+    /// <summary>
+    /// アカウントをロードする。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_LoadAccount()
     {
@@ -39,6 +45,9 @@ public class LoadAccount_Result : MonoBehaviour
         toUserSearch.Execute();
     }
 
+    /// <summary>
+    /// アカウントをロードして、ホーム画面へ遷移。
+    /// </summary>
     private void LoadAccount()
     {
         UserData.UserUniqueID = userInfoData.UserUniqueID;

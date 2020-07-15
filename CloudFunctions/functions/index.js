@@ -7,6 +7,8 @@ const db = admin.firestore();
 const users = db.collection('users');
 const chats = db.collection('chats');
 
+// IDを生成する。
+// --------------
 async function generateNewUserUniqueID() {
 
     const d0 = utils.getRandom3DigitsNumberAsString();  
@@ -26,6 +28,8 @@ async function generateNewUserUniqueID() {
     return userUniqueID;
 }
 
+// 空のユーザーを作成する。
+// ---------------------
 exports.createEmptyUser = functions.region("asia-northeast1").https.onCall(async (data, context) => {
 
     var userUniqueID = await generateNewUserUniqueID();
@@ -45,6 +49,8 @@ exports.createEmptyUser = functions.region("asia-northeast1").https.onCall(async
     return userUniqueID;
 });
 
+// メッセージを送る
+// ----------------
 exports.sendMessage = functions.region("asia-northeast1").https.onCall(async (data, context) => {
     const chatRoomID = data.ChatRoomID;
     const message = data.Message;
@@ -67,6 +73,6 @@ exports.sendMessage = functions.region("asia-northeast1").https.onCall(async (da
         chatObjects.push(obj);
         transaction.update(chats.doc(chatRoomID), {ChatObjects: chatObjects});
     });
-
+    setTimeout()
     return obj;  
 });

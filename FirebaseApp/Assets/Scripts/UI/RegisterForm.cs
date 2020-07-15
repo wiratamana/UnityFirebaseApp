@@ -23,6 +23,9 @@ public class RegisterForm : MonoBehaviour
 
     public bool IsOnScreen => Mathf.Approximately(GetComponent<RectTransform>().localPosition.x, 0);
 
+    /// <summary>
+    /// アカウント作成する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Next()
     {

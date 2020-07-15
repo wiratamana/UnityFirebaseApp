@@ -26,11 +26,17 @@ public class Home : MonoBehaviour
 
     public UITweenFormTransition toChat;
 
+    /// <summary>
+    /// 値を代入する。
+    /// </summary>
     public void SetValue(UserInfoData userInfoData)
     {
         userinfo.SetValue(userInfoData);
     }
 
+    /// <summary>
+    /// Touch to Start 画面に戻る。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Logout()
     {
@@ -38,12 +44,18 @@ public class Home : MonoBehaviour
         logoutTransition.Execute();
     }
 
+    /// <summary>
+    /// フレンド管理に遷移する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_FriendManager()
     {
         searchUserTransition.Execute();
     }
 
+    /// <summary>
+    /// チャット画面に遷移する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_ToChat()
     {

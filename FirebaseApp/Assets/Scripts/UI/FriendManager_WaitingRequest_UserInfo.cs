@@ -3,12 +3,18 @@
 /// </summary>
 public class FriendManager_WaitingRequest_UserInfo : UserInfoBase
 {
+    /// <summary>
+    /// フレンドを申請する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Accept()
     {
         Accept();
     }
 
+    /// <summary>
+    /// 申請したフレンドを削除する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Decline()
     {

@@ -9,6 +9,9 @@ public class FriendManager_Search : MonoBehaviour
     public TMP_InputField id;
     public UITweenFormTransition toUserDataAfterSearch;
 
+    /// <summary>
+    /// フレンドを検索する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Search()
     {

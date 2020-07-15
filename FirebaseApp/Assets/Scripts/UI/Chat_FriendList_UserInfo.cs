@@ -31,12 +31,18 @@ public class Chat_FriendList_UserInfo : MonoBehaviour
         metadata.NewMessageReceived += UpdateLatestMessage;
     }
 
+    /// <summary>
+    /// チャットを送る画面に遷移する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_ToChat()
     {
         ToChat();
     }
 
+    /// <summary>
+    /// チャットを送る画面に遷移する。
+    /// </summary>
     private void ToChat()
     {
         Chat_Messaging.Instance.SetValue(metadata);

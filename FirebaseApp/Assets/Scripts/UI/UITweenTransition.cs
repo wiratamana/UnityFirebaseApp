@@ -11,7 +11,10 @@ public class UITweenTransition
     [SerializeField] private float endPosition;
     [SerializeField] private RectTransform rectTransform;
 
-    // アニメーションを実行する。
+    /// <summary>
+    /// アニメーションを実行する。
+    /// </summary>
+    /// <param name="val">0.0 ~ 1.0</param>
     public void Execute(float val)
     {
         var updatedPosition = curve.Evaluate(val) * endPosition;

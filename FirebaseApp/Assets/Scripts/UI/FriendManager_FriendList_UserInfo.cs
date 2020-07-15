@@ -3,6 +3,9 @@
 /// </summary>
 public class FriendManager_FriendList_UserInfo : UserInfoBase
 {
+    /// <summary>
+    /// フレンドを削除する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Remove()
     {

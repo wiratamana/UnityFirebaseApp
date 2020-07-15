@@ -113,6 +113,9 @@ public class Chat_Messaging : MonoBehaviour
         InstantiateMessageObject(chatObjcets);
     }
 
+    /// <summary>
+    /// チャット画面に戻る。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Back()
     {
@@ -123,6 +126,9 @@ public class Chat_Messaging : MonoBehaviour
         ToChatFriendList();
     }
 
+    /// <summary>
+    /// メッセージを送る。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_SendMessage()
     {

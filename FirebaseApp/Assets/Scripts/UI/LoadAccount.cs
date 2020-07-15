@@ -11,12 +11,18 @@ public class LoadAccount : MonoBehaviour
     public UITweenFormTransition toTouchToStart;
     public UITweenFormTransition toLoadAccountResult;
 
+    /// <summary>
+    /// アカウントを検索する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Search()
     {
         ToLoadAccountResult();
     }
 
+    /// <summary>
+    /// Touch to Start 画面に戻る。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Back()
     {

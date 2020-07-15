@@ -14,6 +14,9 @@ public class TouchToStart : MonoBehaviour
     public UITweenFormTransition fromTitleToHome;
     public TextMeshProUGUI UniqueIDText;
 
+    /// <summary>
+    /// ログイン処理を走らせる。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Login()
     {
@@ -23,6 +26,9 @@ public class TouchToStart : MonoBehaviour
         LoginProcess();
     }
 
+    /// <summary>
+    /// アカウント連携画面に遷移する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_LoadAccount()
     {

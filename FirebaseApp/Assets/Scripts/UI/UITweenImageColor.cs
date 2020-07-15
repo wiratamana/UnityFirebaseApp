@@ -54,6 +54,9 @@ public class UITweenImageColor : MonoBehaviour, IPointerDownHandler, IPointerUpH
         }        
     }
     
+    /// <summary>
+    /// タッチするときに呼ばれます　:D
+    /// </summary>
     [Utils.InheritedByUnityInterface]
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -67,6 +70,9 @@ public class UITweenImageColor : MonoBehaviour, IPointerDownHandler, IPointerUpH
         changeColor = StartCoroutine(ChangeColorCoroutine());
     }
 
+    /// <summary>
+    /// タッチを放したときに呼ばれます　:D
+    /// </summary>
     [Utils.InheritedByUnityInterface]
     public void OnPointerUp(PointerEventData eventData)
     {

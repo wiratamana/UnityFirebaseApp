@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// アカウント情報の確認
+/// </summary>
 public class LoadAccount_Result : MonoBehaviour
 {
     public UserInfoUnityUI userinfo;
@@ -9,6 +12,10 @@ public class LoadAccount_Result : MonoBehaviour
 
     private UserInfoData userInfoData;  
 
+    /// <summary>
+    /// 値を代入する。
+    /// </summary>
+    /// <param name="userInfoData">ユーザー情報</param>
     public void SetValue(UserInfoData userInfoData)
     {
         this.userInfoData = userInfoData;

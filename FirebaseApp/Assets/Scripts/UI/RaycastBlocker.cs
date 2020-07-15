@@ -21,11 +21,17 @@ public class RaycastBlocker : MonoBehaviour
         image = GetComponent<Image>();
     }
 
+    /// <summary>
+    /// タッチ判定を OFF にする。
+    /// </summary>
     public static void Block()
     {
         Instance.image.raycastTarget = true;
     }
 
+    /// <summary>
+    /// タッチ判定を ON にする。
+    /// </summary>
     public static void Unblock()
     {
         Instance.image.raycastTarget = false;

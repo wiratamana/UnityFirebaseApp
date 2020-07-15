@@ -22,12 +22,18 @@ public class FriendManager_Search_Result : MonoBehaviour
         userinfo.SetValue(userInfoData);
     }
 
+    /// <summary>
+    /// フレンド検索画面に戻る。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Back()
     {
         BackToUserSearch();
     }
 
+    /// <summary>
+    /// フレンドリクエストを申請する。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_SendFriendRequest()
     {

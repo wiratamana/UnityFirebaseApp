@@ -1,7 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 承認待ち画面。
+/// </summary>
 public class FriendManager_WaitingRequest : MonoBehaviour
 {
     public FriendManager_WaitingRequest_UserInfo prefab;
@@ -15,6 +17,9 @@ public class FriendManager_WaitingRequest : MonoBehaviour
         FriendManager.Instance.fromWaitingRequest.TransitionCompleted += DestroyAllPrefabs;
     }
 
+    /// <summary>
+    /// 承認待ちのユーザー情報を生成する。
+    /// </summary>
     public async void ShowWaitingRequest()
     {
         ConnectingDialog.Connecting(true);
@@ -43,6 +48,9 @@ public class FriendManager_WaitingRequest : MonoBehaviour
         ConnectingDialog.Success();
     }
 
+    /// <summary>
+    /// 生成した、ユーザー情報を全部削除する。
+    /// </summary>
     public void DestroyAllPrefabs()
     {
         if (userInfos.Count == 0)

@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using Tamana;
 
+/// <summary>
+/// 送るメッセージの内容。
+/// </summary>
 public readonly struct ChatObject
 {
     public readonly string MessageUniqueID;

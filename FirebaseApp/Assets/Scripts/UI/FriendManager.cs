@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// フレンド管理
+/// </summary>
 public class FriendManager : MonoBehaviour
 {
     private static FriendManager instance;

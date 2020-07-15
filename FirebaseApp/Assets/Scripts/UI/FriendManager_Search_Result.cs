@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿using UnityEngine;
 
+/// <summary>
+/// フレンド検索したの結果。
+/// </summary>
 public class FriendManager_Search_Result : MonoBehaviour
 {
     public UserInfoUnityUI userinfo;
@@ -12,6 +11,10 @@ public class FriendManager_Search_Result : MonoBehaviour
 
     private string playerUniqueID;
 
+    /// <summary>
+    /// 値を代入する。
+    /// </summary>
+    /// <param name="userInfoData">ユーザー情報</param>
     public void SetValue(UserInfoData userInfoData)
     {
         playerUniqueID = userInfoData.UserUniqueID;
@@ -31,11 +34,17 @@ public class FriendManager_Search_Result : MonoBehaviour
         SendRequestFriend();
     }
 
+    /// <summary>
+    /// ユーザー検索画面に戻る。
+    /// </summary>
     private void BackToUserSearch()
     {
         backToUserSearch.Execute();
     }
 
+    /// <summary>
+    /// フレンド申請する。
+    /// </summary>
     private async void SendRequestFriend()
     {
         ConnectingDialog.Connecting(true);

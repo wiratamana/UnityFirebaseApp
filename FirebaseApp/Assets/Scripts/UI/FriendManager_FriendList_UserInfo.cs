@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using UnityEngine;
-
+﻿/// <summary>
+/// フレンドリスト中のユーザー情報
+/// </summary>
 public class FriendManager_FriendList_UserInfo : UserInfoBase
 {
     [Utils.InvokeByUnity]
@@ -13,6 +9,9 @@ public class FriendManager_FriendList_UserInfo : UserInfoBase
         Remove();
     }
 
+    /// <summary>
+    /// フレンドを削除する。
+    /// </summary>
     private async void Remove()
     {
         ConnectingDialog.Connecting(true);

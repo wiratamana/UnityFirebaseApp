@@ -1,7 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// フォームからフォームへと移動モーション。
+/// </summary>
 public class UITweenFormTransition : MonoBehaviour
 {
     [SerializeField] private UITweenTransition[] forms;
@@ -12,6 +14,9 @@ public class UITweenFormTransition : MonoBehaviour
     private static int sample = 5;
     private static float threshold = 0.01f;
 
+    /// <summary>
+    /// アニメーションを実行する。
+    /// </summary>
     public void Execute()
     {
         RaycastBlocker.Block();

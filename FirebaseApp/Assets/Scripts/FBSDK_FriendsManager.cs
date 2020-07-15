@@ -1,17 +1,23 @@
-﻿using Firebase.Firestore;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
+using Firebase.Firestore;
 using Tamana;
 
+/// <summary>
+/// Firestore にかかわるメソッドの集まり。
+/// </summary>
 public static partial class FBSDK
 {
+    /// <summary>
+    /// Firestore の フレンド管理にかかわるメソッドの集まり。
+    /// </summary>
     public static class FriendsManager
     {
+        /// <summary>
+        /// Firestore から取得したデータです。
+        /// </summary>
         private readonly struct Metadata
         {
             public readonly DocumentReference documentReference;
@@ -32,102 +38,32 @@ public static partial class FBSDK
         }
 
         /// <summary>
-        /// transaction, myMetadata, friendMetadata (can null)
+        /// 承認待ちユーザーをフレンド登録します。
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="playerUniqueID"></param>
-        /// <param name="cb"></param>
-        /// <returns></returns>
-        private static async Task<T> RunFriendTransactionAsyncTask<T>(string playerUniqueID, Func<Transaction, Metadata, Metadata, T> cb)
-        {
-#if FIRESTORE_TRANSACTION
-            var db = FirebaseFirestore.DefaultInstance;
-            var userUniqueID = UserData.UserUniqueID;
-            DocumentReference myDoc = MyDocuments;
-            DocumentReference friendDoc = string.IsNullOrEmpty(playerUniqueID) ? null : GetDocuments(playerUniqueID);
-
-            return await db.RunTransactionAsync(async transaction =>
-            {
-                try
-                {
-                    DocumentSnapshot mySnapshot = await transaction.GetSnapshotAsync(myDoc);
-                    DocumentSnapshot friendSnapshot = friendDoc == null ? null : await transaction.GetSnapshotAsync(friendDoc);
-
-                    List<string> myselfReq = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
-                    List<string> myselfList = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
-
-                    List<string> friendList = friendSnapshot?.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
-                    List<string> friendReq = friendSnapshot?.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
-
-                    var myMetadata = new Metadata(myDoc, userUniqueID, myselfList, myselfReq);
-                    var friendMetadata = friendDoc == null ? Metadata.Null : new Metadata(friendDoc, playerUniqueID, friendList, friendReq);
-
-                    return cb == null ? default : cb.Invoke(transaction, myMetadata, friendMetadata);
-                }
-                catch
-                {
-                    return default;
-                }                
-            });
-#else
-            return default;
-#endif
-        }
-
-
+        /// <param name="playerUniqueID">相手のユーザーID</param>
+        /// <returns>処理が最後まで行けば true を返す。途中でエラーなどが発生した場合に、false を返す。</returns>
         public static async Task<bool> AcceptWaitingRequestAsyncTask(string playerUniqueID)
         {
             try
             {
-#if FIRESTORE_TRANSACTION
-                return await RunFriendTransactionAsyncTask(playerUniqueID, (transaction, myMetadata, friendMetadata) =>
-                {
-                    // me : remove req add list
-                    myMetadata.friendRequest.RemoveIfContains(playerUniqueID);
-                    myMetadata.friendList.AddIfNotContains(playerUniqueID);
-
-                    lock (Data)
-                    {
-                        Data.Clear();
-                        Data.Add(UserData.FIELD_FRIEND_REQUEST, myMetadata.friendRequest);
-                        Data.Add(UserData.FIELD_FRIEND_LIST, myMetadata.friendList);
-                    }
-
-                    transaction.Update(myMetadata.documentReference, Data);
-
-                    // friend : add list only 
-                    friendMetadata.friendList.AddIfNotContains(myMetadata.uniqueID);
-
-                    lock (Data)
-                    {
-                        Data.Clear();
-                        Data.Add(UserData.FIELD_FRIEND_LIST, friendMetadata.friendList);
-                    }
-
-                    transaction.Update(friendMetadata.documentReference, Data);
-
-                    return true;
-                });
-#else
                 var mySnapshot = await MyDocuments.GetSnapshotAsync();
                 var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
 
-                var myRequest = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
-                var myFriendList = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
-                var friendFriendList = friendSnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+                var myRequest = mySnapshot.GetValue<List<string>>(FIELD_FRIEND_REQUEST);
+                var myFriendList = mySnapshot.GetValue<List<string>>(FIELD_FRIEND_LIST);
+                var friendFriendList = friendSnapshot.GetValue<List<string>>(FIELD_FRIEND_LIST);
 
                 myRequest.RemoveIfContains(playerUniqueID);
                 myFriendList.AddIfNotContains(playerUniqueID);
                 friendFriendList.AddIfNotContains(UserData.UserUniqueID);
 
                 var batch = FirebaseFirestore.DefaultInstance.StartBatch();
-                batch.Update(MyDocuments, UserData.FIELD_FRIEND_REQUEST, myRequest);
-                batch.Update(MyDocuments, UserData.FIELD_FRIEND_LIST, myFriendList);
-                batch.Update(GetDocuments(playerUniqueID), UserData.FIELD_FRIEND_LIST, friendFriendList);
+                batch.Update(MyDocuments, FIELD_FRIEND_REQUEST, myRequest);
+                batch.Update(MyDocuments, FIELD_FRIEND_LIST, myFriendList);
+                batch.Update(GetDocuments(playerUniqueID), FIELD_FRIEND_LIST, friendFriendList);
                 await batch.CommitAsync();
 
                 return true;
-#endif
             }
             catch
             {
@@ -135,37 +71,27 @@ public static partial class FBSDK
             }
         }
 
+        /// <summary>
+        /// 承認待ちユーザーを削除する。
+        /// </summary>
+        /// <param name="playerUniqueID">相手のユーザーID</param>
+        /// <returns>処理が最後まで行けば true を返す。途中でエラーなどが発生した場合に、false を返す。</returns>
         public static async Task<bool> RemoveWaitingRequestAsyncTask(string playerUniqueID)
         {
             try
             {
-#if FIRESTORE_TRANSACTION
-                var db = FirebaseFirestore.DefaultInstance;
-                var myDoc = MyDocuments;
-
-                return await db.RunTransactionAsync(async transaction => {
-
-                    var mySnapshot = await transaction.GetSnapshotAsync(myDoc);
-                    var array = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
-                    array.RemoveIfContains(playerUniqueID);
-                    await MyDocuments.UpdateAsync(UserData.FIELD_FRIEND_REQUEST, array);
-                    return true;
-
-                });
-#else
                 var mySnapshot = await MyDocuments.GetSnapshotAsync();
                 var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
 
-                var myRequest = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+                var myRequest = mySnapshot.GetValue<List<string>>(FIELD_FRIEND_REQUEST);
 
                 myRequest.RemoveIfContains(playerUniqueID);
 
                 var batch = FirebaseFirestore.DefaultInstance.StartBatch();
-                batch.Update(MyDocuments, UserData.FIELD_FRIEND_REQUEST, myRequest);
+                batch.Update(MyDocuments, FIELD_FRIEND_REQUEST, myRequest);
                 await batch.CommitAsync();
 
                 return true;
-#endif
             }
             catch
             {
@@ -173,7 +99,10 @@ public static partial class FBSDK
             }
         }
 
-
+        /// <summary>
+        /// フレンド情報を取得します。
+        /// </summary>
+        /// <returns>フレンド情報</returns>
         public static async Task<ReadOnlyCollection<UserInfoData>> GetFriendListAsyncTask()
         {
             try
@@ -181,7 +110,7 @@ public static partial class FBSDK
                 var db = FirebaseFirestore.DefaultInstance;
                 var mySnapshot = await MyDocuments.GetSnapshotAsync();
 
-                var friendListResult = mySnapshot.TryGetValue(UserData.FIELD_FRIEND_LIST, out List<string> friendList);
+                var friendListResult = mySnapshot.TryGetValue(FIELD_FRIEND_LIST, out List<string> friendList);
                 if (friendListResult == false || friendList == null)
                 {
                     return null;
@@ -202,38 +131,30 @@ public static partial class FBSDK
             }
         }
 
+        /// <summary>
+        /// フレンドを削除する。
+        /// </summary>
+        /// <param name="playerUniqueID">相手のユーザーID</param>
+        /// <returns>処理が最後まで行けば true を返す。途中でエラーなどが発生した場合に、false を返す。</returns>
         public static async Task<bool> RemoveFriendAysncTask(string playerUniqueID)
         {
             try
             {
-#if FIRESTORE_TRANSACTION
-                return await RunFriendTransactionAsyncTask(playerUniqueID, (transaction, myMetadata, friendMetadata) => 
-                {
-                    myMetadata.friendList.RemoveIfContains(friendMetadata.uniqueID);
-                    transaction.Update(myMetadata.documentReference, UserData.FIELD_FRIEND_LIST, myMetadata.friendList);
-
-                    friendMetadata.friendList.RemoveIfContains(myMetadata.uniqueID);
-                    transaction.Update(friendMetadata.documentReference, UserData.FIELD_FRIEND_LIST, friendMetadata.friendList);
-
-                    return true;
-                });
-#else
                 var mySnapshot = await MyDocuments.GetSnapshotAsync();
                 var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
 
-                var myFriendList = mySnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
-                var friendFriendList = friendSnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_LIST);
+                var myFriendList = mySnapshot.GetValue<List<string>>(FIELD_FRIEND_LIST);
+                var friendFriendList = friendSnapshot.GetValue<List<string>>(FIELD_FRIEND_LIST);
 
                 myFriendList.RemoveIfContains(playerUniqueID);
                 friendFriendList.RemoveIfContains(UserData.UserUniqueID);
 
                 var batch = FirebaseFirestore.DefaultInstance.StartBatch();
-                batch.Update(MyDocuments, UserData.FIELD_FRIEND_LIST, myFriendList);
-                batch.Update(GetDocuments(playerUniqueID), UserData.FIELD_FRIEND_LIST, friendFriendList);
+                batch.Update(MyDocuments, FIELD_FRIEND_LIST, myFriendList);
+                batch.Update(GetDocuments(playerUniqueID), FIELD_FRIEND_LIST, friendFriendList);
                 await batch.CommitAsync();
 
                 return true;
-#endif
 
             }
             catch
@@ -242,13 +163,17 @@ public static partial class FBSDK
             }
         }
 
+        /// <summary>
+        /// 承認待ちユーザー情報を取得する。
+        /// </summary>
+        /// <returns>処理が最後まで行けば true を返す。途中でエラーなどが発生した場合に、false を返す。</returns>
         public static async Task<ReadOnlyCollection<UserInfoData>> GetWaitingRequestAsyncTask()
         {
             try
             {
                 var snapshot = await MyDocuments.GetSnapshotAsync();
 
-                var waitingRequestIDs = snapshot.GetValue<List<object>>(UserData.FIELD_FRIEND_REQUEST);
+                var waitingRequestIDs = snapshot.GetValue<List<object>>(FIELD_FRIEND_REQUEST);
                 var tasks = new List<Task<UserInfoData>>();
                 foreach (var item in waitingRequestIDs)
                 {
@@ -264,30 +189,24 @@ public static partial class FBSDK
             }
         }
 
+        /// <summary>
+        /// 相手にフレンドを申請する。
+        /// </summary>
+        /// <param name="playerUniqueID">相手のユーザーID</param>
+        /// <returns>処理が最後まで行けば true を返す。途中でエラーなどが発生した場合に、false を返す。</returns>
         public static async Task<bool> SendFriendRequestAsyncTask(string playerUniqueID)
         {
             try
             {
-#if FIRESTORE_TRANSACTION
-                return await RunFriendTransactionAsyncTask(playerUniqueID, (transaction, myMetadata, friendMetadata) =>
-                {
-                    friendMetadata.friendRequest.AddIfNotContains(myMetadata.uniqueID);
-                    transaction.Update(friendMetadata.documentReference, UserData.FIELD_FRIEND_REQUEST, friendMetadata.friendRequest);
-
-                    return true;
-                });
-#else
                 var friendSnapshot = await GetDocuments(playerUniqueID).GetSnapshotAsync();
-                var friendFriendRequest = friendSnapshot.GetValue<List<string>>(UserData.FIELD_FRIEND_REQUEST);
+                var friendFriendRequest = friendSnapshot.GetValue<List<string>>(FIELD_FRIEND_REQUEST);
                 friendFriendRequest.AddIfNotContains(UserData.UserUniqueID);
 
                 var batch = FirebaseFirestore.DefaultInstance.StartBatch();
-                batch.Update(GetDocuments(playerUniqueID), UserData.FIELD_FRIEND_REQUEST, friendFriendRequest);
+                batch.Update(GetDocuments(playerUniqueID), FIELD_FRIEND_REQUEST, friendFriendRequest);
                 await batch.CommitAsync();
 
-
                 return true;
-#endif
 
             }
             catch

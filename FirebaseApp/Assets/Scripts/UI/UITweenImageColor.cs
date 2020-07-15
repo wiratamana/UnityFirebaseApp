@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Tween 用のクラスです。<see cref="Image.color"/> を変動する。
+/// </summary>
 public class UITweenImageColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public const float COLOR_CHANGE_SPEED = 5.0f;
@@ -50,7 +53,8 @@ public class UITweenImageColor : MonoBehaviour, IPointerDownHandler, IPointerUpH
             changeColor = null;
         }        
     }
-
+    
+    [Utils.InheritedByUnityInterface]
     public void OnPointerDown(PointerEventData eventData)
     {
         targetColor = 1.0f;
@@ -63,6 +67,7 @@ public class UITweenImageColor : MonoBehaviour, IPointerDownHandler, IPointerUpH
         changeColor = StartCoroutine(ChangeColorCoroutine());
     }
 
+    [Utils.InheritedByUnityInterface]
     public void OnPointerUp(PointerEventData eventData)
     {
         targetColor = 0.0f;

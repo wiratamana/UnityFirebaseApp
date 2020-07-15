@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// 新規ユーザーを作成時に入力してもらうユーザー情報。
+/// </summary>
 public class RegisterForm : MonoBehaviour
 {
     public static event System.Action<string, Gender, System.DateTime> AccountCreated;

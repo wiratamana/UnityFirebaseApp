@@ -1,9 +1,11 @@
-﻿using System.Collections;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using UnityEngine;
 
 using TMPro;
 
+/// <summary>
+/// チャット画面のフレンド情報
+/// </summary>
 public class Chat_FriendList_UserInfo : MonoBehaviour
 {
     public TextMeshProUGUI userName;
@@ -15,6 +17,10 @@ public class Chat_FriendList_UserInfo : MonoBehaviour
 
     private ChatRoom metadata;
 
+    /// <summary>
+    /// 値を代入する。
+    /// </summary>
+    /// <param name="metadata">チャット部屋</param>
     public void SetValue(ChatRoom metadata)
     {
         this.metadata = metadata;
@@ -37,6 +43,10 @@ public class Chat_FriendList_UserInfo : MonoBehaviour
         toChat.Execute();
     }
 
+    /// <summary>
+    /// 最後に送信したメッセージ内容を更新する。
+    /// </summary>
+    /// <param name="chatObjects">チャット情報</param>
     private void UpdateLatestMessage(ReadOnlyCollection<ChatObject> chatObjects)
     {
         if (chatObjects.Count == 0)

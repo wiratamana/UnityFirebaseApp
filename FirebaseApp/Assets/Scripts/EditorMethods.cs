@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EditorMethods : MonoBehaviour
 {
 #if UNITY_EDITOR
+
     [UnityEditor.MenuItem("EditorMethods/ClearSaveData")]
     private static void DeleteAll()
     {

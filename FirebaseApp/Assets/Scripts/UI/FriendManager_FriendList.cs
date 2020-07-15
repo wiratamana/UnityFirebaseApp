@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using UnityEngine;
 
+/// <summary>
+/// フレンドリスト
+/// </summary>
 public class FriendManager_FriendList : MonoBehaviour
 {
     public FriendManager_FriendList_UserInfo prefab;
@@ -18,6 +18,9 @@ public class FriendManager_FriendList : MonoBehaviour
         FriendManager.Instance.fromFriendsList.TransitionCompleted += DestroyFriendsInfo;
     }
 
+    /// <summary>
+    /// フレンドリストを生成する。
+    /// </summary>
     private async void InstantiateFriendsInfo()
     {
         ConnectingDialog.Connecting(true);
@@ -44,6 +47,9 @@ public class FriendManager_FriendList : MonoBehaviour
         ConnectingDialog.Success();
     }
 
+    /// <summary>
+    /// フレンドリストで生成されたすべてのユーザー情報を破壊する。
+    /// </summary>
     private void DestroyFriendsInfo()
     {
         if (userInfos.Count == 0)

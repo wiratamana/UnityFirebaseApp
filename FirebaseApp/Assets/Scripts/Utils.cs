@@ -7,6 +7,11 @@ using UnityEngine;
 
 public static class Utils
 {
+    /// <summary>
+    /// 1234567890ABCDEF を 1234-5678-90AB-CDEF に変換し返す。
+    /// </summary>
+    /// <param name="id">Unity の Input UI から入力された文字列型の値。</param>
+    /// <returns>変換した ID を返す</returns>
     public static string GetUserUniqueIDFromInput(string id)
     {
         if (id.Length < 12)
@@ -31,6 +36,11 @@ public static class Utils
         return sb.ToString();
     }
 
+    /// <summary>
+    /// キーボードが出るときに、キーボードの高さを変えす。
+    /// </summary>
+    /// <param name="includeInput">キーボードが出るときに、入力した文字列のプレビュー欄の高さを含みますか？</param>
+    /// <returns>キーボードの高さ</returns>
     public static float GetTouchScreenKeyboardHeight(bool includeInput)
     {
 #if UNITY_ANDROID
@@ -69,6 +79,12 @@ public static class Utils
 #endif
     }
 
+    /// <summary>
+    /// Unity の ボタンから呼び出される。マークのことです。
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class InvokeByUnity : Attribute { }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class InheritedByUnityInterface : Attribute { } 
 }

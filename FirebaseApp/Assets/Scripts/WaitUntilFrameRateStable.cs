@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// フレームレートが安定になるまで待機
+/// </summary>
 public class WaitUntilFrameRateStable : CustomYieldInstruction
 {
     private readonly List<float> deltaTimes = new List<float>(SAMPLE);
     private const int SAMPLE = 5;
     private const float DEVIATION = 12f;
 
-    public bool IsFrameRatesStable()
+    /// <summary>
+    /// フレームレートが安定になるまで待機
+    /// </summary>
+    private bool IsFrameRatesStable()
     {
         int average = 0;
         foreach (int val in deltaTimes)

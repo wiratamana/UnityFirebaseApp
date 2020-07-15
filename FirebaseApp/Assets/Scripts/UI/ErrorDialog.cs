@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// エラーが起きたときにメッセージを出す用。
+/// </summary>
 public class ErrorDialog : MonoBehaviour
 {
     public static ErrorDialog Instance { get; private set; }
@@ -24,6 +25,10 @@ public class ErrorDialog : MonoBehaviour
         Instance = this;
     }
 
+    /// <summary>
+    /// エラーダイアログを表示する。
+    /// </summary>
+    /// <param name="message">メッセージ</param>
     public void Open(string message)
     {
         text.text = message;
@@ -31,6 +36,9 @@ public class ErrorDialog : MonoBehaviour
         transition.Execute();
     }
 
+    /// <summary>
+    /// 表示したエラーダイアログを非表示する。
+    /// </summary>
     public void Close()
     {
         background.gameObject.SetActive(false);

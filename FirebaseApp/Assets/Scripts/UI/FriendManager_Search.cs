@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using TMPro;
-using System.Text;
 
+/// <summary>
+/// ユーザー検索
+/// </summary>
 public class FriendManager_Search : MonoBehaviour
 {
     public TMP_InputField id;
@@ -16,6 +15,9 @@ public class FriendManager_Search : MonoBehaviour
         GetUserInfoData();
     }
 
+    /// <summary>
+    /// 入力してもらった ID でユーザー情報を検索する。
+    /// </summary>
     private async void GetUserInfoData()
     {
         var id = Utils.GetUserUniqueIDFromInput(this.id.text);

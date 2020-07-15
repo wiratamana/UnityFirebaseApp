@@ -1,9 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// 「接続中...」 ・　「失敗」　・　「成功」  ダイアログを表示する。
+/// </summary>
 public class ConnectingDialog : MonoBehaviour
 {
     [SerializeField] private Image blockerButton;
@@ -42,6 +44,10 @@ public class ConnectingDialog : MonoBehaviour
         button.onClick.AddListener(HideMessage);
     }
 
+    /// <summary>
+    /// 「接続中...」を表示する。
+    /// </summary>
+    /// <param name="autoHideAfterSucceeded">結果が「成功」だった場合にダイアログを自動的に非表示しますか？</param>
     public static void Connecting(bool autoHideAfterSucceeded = false)
     {
         SetActive(true);
@@ -52,6 +58,9 @@ public class ConnectingDialog : MonoBehaviour
         ConnectingDialog.autoHideAfterSucceeded = autoHideAfterSucceeded;
     }
 
+    /// <summary>
+    /// 「失敗」を表示する。
+    /// </summary>
     public static void Failed()
     {
         SetActive(true);
@@ -60,6 +69,9 @@ public class ConnectingDialog : MonoBehaviour
         Instance.blockerButton.raycastTarget = true;
     }
 
+    /// <summary>
+    /// 「成功」を表示する。
+    /// </summary>
     public static void Success()
     {
         SetActive(true);

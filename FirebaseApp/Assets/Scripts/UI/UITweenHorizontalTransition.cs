@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
+/// <summary>
+/// 左から現れ、右へ消え。消えた時に Y サイズが０まで縮める。
+/// </summary>
 [Serializable]
 public class UITweenHorizontalTransition
 {
@@ -19,6 +18,10 @@ public class UITweenHorizontalTransition
     public UITweenFormTransition closeAnimation;
     public UITweenSizeDelta closeAnimationSize;
 
+    /// <summary>
+    /// アニメーションを実行する。
+    /// </summary>
+    /// <param name="delay"></param>
     public void ActivateAndPlayAnimation(float delay)
     {
         IEnumerator coroutine()
@@ -39,6 +42,11 @@ public class UITweenHorizontalTransition
         animationGO.SetActive(true);
     }
 
+
+    /// <summary>
+    /// アニメーションごと破棄する。
+    /// </summary>
+    /// <param name="delay"></param>
     public void DestroyWithAnimation()
     {
         closeAnimationSize.Update += () =>

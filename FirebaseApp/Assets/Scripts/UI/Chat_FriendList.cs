@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using UnityEngine;
 
+/// <summary>
+/// チャット画面。
+/// </summary>
 public class Chat_FriendList : MonoBehaviour
 {
     private static Chat_FriendList instance;
@@ -41,6 +42,9 @@ public class Chat_FriendList : MonoBehaviour
         ToHome.Execute();
     }
 
+    /// <summary>
+    /// フレンド情報を生成する。
+    /// </summary>
     private async void InstantaiteUserInfo()
     {
         ConnectingDialog.Connecting(true);
@@ -71,6 +75,9 @@ public class Chat_FriendList : MonoBehaviour
         ConnectingDialog.Success();
     }
 
+    /// <summary>
+    /// 生成したフレンド情報を破壊する。
+    /// </summary>
     private void DestroyMessage()
     {
         ToHome.TransitionCompleted -= DestroyMessage;

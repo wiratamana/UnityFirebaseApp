@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// ユーザー名、誕生日、スコア、性別、などの UnityUI リファレンスの集まり。
+/// </summary>
 [Serializable]
 public class UserInfoUnityUI
 {
@@ -35,6 +34,10 @@ public class UserInfoUnityUI
     public Color ColorMale => colorMale;
     public Color ColorFemale => colorFemale;
 
+    /// <summary>
+    /// 値を代入する。
+    /// </summary>
+    /// <param name="userInfoData">ユーザー情報</param>
     public void SetValue(UserInfoData userInfoData)
     {        
         Username.text = userInfoData.Username;

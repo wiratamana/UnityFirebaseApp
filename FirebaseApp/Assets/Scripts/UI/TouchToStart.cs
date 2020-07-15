@@ -1,8 +1,10 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// タッチして、ログインする
+/// </summary>
 public class TouchToStart : MonoBehaviour
 {
     public TextMeshProUGUI touchToStartMessage;
@@ -32,6 +34,9 @@ public class TouchToStart : MonoBehaviour
         toLoadAccount.Execute();
     }
 
+    /// <summary>
+    /// ログインする。
+    /// </summary>
     private async void LoginProcess()
     {
         ConnectingDialog.Connecting(true);
@@ -60,16 +65,25 @@ public class TouchToStart : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Touch to Start から ユーザー情報を記入するフォームへ移動。
+    /// </summary>
     private void GoToRegisterForm()
     {
         ConnectingDialog.Success();
-        RegisterForm.AccountCreated += RegisterForm_AccountCreated;
+        RegisterForm.AccountCreated += OnAccountCreated;
         register.Execute();
     }
 
-    private async void RegisterForm_AccountCreated(string username, Gender gender, System.DateTime birthday)
+    /// <summary>
+    /// ユーザー情報を記入後のコールバック。
+    /// </summary>
+    /// <param name="username">ユーザー名</param>
+    /// <param name="gender">性別</param>
+    /// <param name="birthday">誕生日</param>
+    private async void OnAccountCreated(string username, Gender gender, System.DateTime birthday)
     {
-        RegisterForm.AccountCreated -= RegisterForm_AccountCreated;
+        RegisterForm.AccountCreated -= OnAccountCreated;
 
         ConnectingDialog.Connecting(true);
         var myUserData = new UserInfoData(UserData.UserUniqueID, username, birthday, gender, 0);
@@ -87,6 +101,9 @@ public class TouchToStart : MonoBehaviour
         ToHome();
     }
 
+    /// <summary>
+    /// ログインに成功したときにホーム画面に移動。
+    /// </summary>
     private void ToHome()
     {
         if (FindObjectOfType<RegisterForm>().IsOnScreen)
@@ -114,6 +131,9 @@ public class TouchToStart : MonoBehaviour
         }       
     }
 
+    /// <summary>
+    /// ホームからログインするときに、Touch to Start のアニメーションを再生する。
+    /// </summary>
     public void ReactivateTouchToStart()
     {
         touchToStartMessage.gameObject.SetActive(true);

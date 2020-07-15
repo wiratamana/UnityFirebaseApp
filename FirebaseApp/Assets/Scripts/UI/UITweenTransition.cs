@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// Tween 用のクラス。Tween はコードによってのアニメーションです。
+/// </summary>
 [System.Serializable]
 public class UITweenTransition
 {
@@ -10,6 +11,7 @@ public class UITweenTransition
     [SerializeField] private float endPosition;
     [SerializeField] private RectTransform rectTransform;
 
+    // アニメーションを実行する。
     public void Execute(float val)
     {
         var updatedPosition = curve.Evaluate(val) * endPosition;

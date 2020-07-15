@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Tween 用のクラスです。<see cref="RectTransform.sizeDelta"/> を変動する。
+/// </summary>
 public class UITweenSizeDelta : MonoBehaviour
 {
     [SerializeField] private RectTransform rectTransform;
@@ -14,6 +17,9 @@ public class UITweenSizeDelta : MonoBehaviour
     public event System.Action Update;
     public event System.Action TransitionCompleted;
 
+    /// <summary>
+    /// アニメーションを実行する。
+    /// </summary>
     public void Execute()
     {
         RaycastBlocker.Block();

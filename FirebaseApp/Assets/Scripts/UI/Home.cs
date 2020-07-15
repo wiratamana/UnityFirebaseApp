@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿using UnityEngine;
 
+/// <summary>
+/// ホーム画面
+/// </summary>
 public class Home : MonoBehaviour
 {
     private static Home instance;

@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-
+﻿/// <summary>
+/// 承認待ちのユーザー情報
+/// </summary>
 public class FriendManager_WaitingRequest_UserInfo : UserInfoBase
 {
     [Utils.InvokeByUnity]
@@ -18,6 +15,9 @@ public class FriendManager_WaitingRequest_UserInfo : UserInfoBase
         Decline();
     }
 
+    /// <summary>
+    /// 承認して、フレンドになる。
+    /// </summary>
     private async void Accept()
     {
         ConnectingDialog.Connecting(true);
@@ -39,6 +39,9 @@ public class FriendManager_WaitingRequest_UserInfo : UserInfoBase
         transition.DestroyWithAnimation();
     }
 
+    /// <summary>
+    /// 削除する。
+    /// </summary>
     private async void Decline()
     {
         ConnectingDialog.Connecting(true);

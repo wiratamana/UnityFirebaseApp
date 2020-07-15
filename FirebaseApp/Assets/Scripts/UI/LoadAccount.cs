@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// アカウント連携用。
+/// </summary>
 public class LoadAccount : MonoBehaviour
 {
     public TMP_InputField userUniqueID;
@@ -22,6 +23,9 @@ public class LoadAccount : MonoBehaviour
         ToTouchToStart();
     }
 
+    /// <summary>
+    /// 記入してもらったユーザーIDを使ってユーザー検索する。ユーザーが見つかったら連携する確認画面に移動。
+    /// </summary>
     private async void ToLoadAccountResult()
     {
         ConnectingDialog.Connecting(true);
@@ -49,6 +53,9 @@ public class LoadAccount : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Touch to Start 画面に戻る。
+    /// </summary>
     private void ToTouchToStart()
     {
         toTouchToStart.Execute();

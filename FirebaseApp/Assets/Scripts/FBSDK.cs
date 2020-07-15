@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Firebase.Firestore;
-using Firebase.Extensions;
 
 public static partial class FBSDK
 {
-    private static Dictionary<string, object> Data = new Dictionary<string, object>();
+    public const string FIELD_FRIEND_REQUEST = "FriendRequest";
+    public const string FIELD_FRIEND_LIST = "FriendList";
+    public const string FIELD_FRIEND_CHAT_ROOM_IDS = "FriendChatRoomIDs";
+    public const string FIELD_CHAT_ROOM_ID = "ChatRoomID";
+    public const string FIELD_CHAT_OBJECTS = "ChatObjects";
 
     private static CollectionReference Users
     {
@@ -24,6 +24,11 @@ public static partial class FBSDK
     private static DocumentReference MyDocuments => Users.Document(UserData.UserUniqueID);
     private static DocumentReference GetDocuments(string userUniqueID) => Users.Document(userUniqueID);
 
+    /// <summary>
+    /// ユーザー情報を取得する。
+    /// </summary>
+    /// <param name="userUniqueID">相手の ID</param>
+    /// <returns>処理が最後まで行けば <see cref="UserInfoData"/> を返す。途中でエラーなどが発生した場合に、<see cref="UserInfoData.Null"/> を返す。</returns>
     public static async Task<UserInfoData> GetUserInfoDataAsyncTask(string userUniqueID)
     {
         try
@@ -43,20 +48,24 @@ public static partial class FBSDK
         }
     }
 
+    /// <summary>
+    /// ユーザー情報を更新する。
+    /// </summary>
+    /// <param name="userUniqueID">相手の ID</param>
+    /// <returns>処理が最後まで行けば <see cref="true"/> を返す。途中でエラーなどが発生した場合に、<see cref="false"/> を返す。</returns>
     public static async Task<bool> UpdateUserInfoDataAsyncTask(UserInfoData userInfoData)
     {
         try
         {
             var docRef = GetDocuments(userInfoData.UserUniqueID);
 
-            lock (Data)
+            var Data = new Dictionary<string, object>
             {
-                Data.Clear();
-                Data.Add(nameof(UserInfoData.Username), userInfoData.Username);
-                Data.Add(nameof(UserInfoData.Gender), userInfoData.Gender.ToString());
-                Data.Add(nameof(UserInfoData.Birthday), userInfoData.Birthday.ToShortDateString());
-                Data.Add(nameof(UserInfoData.Score), userInfoData.Score);
-            }            
+                { nameof(UserInfoData.Username), userInfoData.Username },
+                { nameof(UserInfoData.Gender), userInfoData.Gender.ToString() },
+                { nameof(UserInfoData.Birthday), userInfoData.Birthday.ToShortDateString() },
+                { nameof(UserInfoData.Score), userInfoData.Score }
+            };
 
             await docRef.UpdateAsync(Data);
             return true;

@@ -1,12 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>
+/// フレンドにメッセージを送る画面
+/// </summary>
 public class Chat_Messaging : MonoBehaviour
 {
+    /// <summary>
+    /// メッセージを送信するハンドラー
+    /// </summary>
     private class SubmitHandler : MonoBehaviour
     {
         public event System.Action<string> Submit;
@@ -84,6 +89,10 @@ public class Chat_Messaging : MonoBehaviour
         submitHandler.enabled = false;
     }
 
+    /// <summary>
+    /// 値を代入する。
+    /// </summary>
+    /// <param name="metadata">チャット部屋</param>
     public void SetValue(ChatRoom metadata)
     {
         this.metadata = metadata;
@@ -95,6 +104,10 @@ public class Chat_Messaging : MonoBehaviour
         InstantiateMessageObject(metadata.ChatObjects);
     }
 
+    /// <summary>
+    /// 新たなメッセージを受け取ったときのコールバック
+    /// </summary>
+    /// <param name="chatObjcets"></param>
     private void OnNewMessageReceived(ReadOnlyCollection<ChatObject> chatObjcets)
     {
         InstantiateMessageObject(chatObjcets);
@@ -116,12 +129,19 @@ public class Chat_Messaging : MonoBehaviour
         SendMessageAsync(messageInput.text);
     }
 
+    /// <summary>
+    /// チャットのフレンド一覧画面に戻る。
+    /// </summary>
     private void ToChatFriendList()
     {
         toChatFriendList.TransitionCompleted += DestroyMessageObjects;
         toChatFriendList.Execute();
     }
 
+    /// <summary>
+    /// メッセージを生成する。
+    /// </summary>
+    /// <param name="chatObjects"></param>
     private void InstantiateMessageObject(IEnumerable<ChatObject> chatObjects)
     {
         var userUniqueID = UserData.UserUniqueID;
@@ -134,6 +154,9 @@ public class Chat_Messaging : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 生成したメッセージ内容をすべて破壊する。
+    /// </summary>
     private void DestroyMessageObjects()
     {
         toChatFriendList.TransitionCompleted -= DestroyMessageObjects;
@@ -145,6 +168,10 @@ public class Chat_Messaging : MonoBehaviour
         messageDetails.Clear();
     }
 
+    /// <summary>
+    /// メッセージを送る。
+    /// </summary>
+    /// <param name="message">メッセージ</param>
     private async void SendMessageAsync(string message)
     {
         var chatObject = new ChatObject(message, UserData.UserUniqueID);

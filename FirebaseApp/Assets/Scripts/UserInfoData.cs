@@ -1,9 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+/// <summary>
+/// 性別
+/// </summary>
+public enum Gender
+{
+    Female = 1,
+    Male = 2,
+}
 
+/// <summary>
+/// ユーザー情報です。
+/// </summary>
 public readonly struct UserInfoData
 {
     public readonly string UserUniqueID;
@@ -23,7 +30,13 @@ public readonly struct UserInfoData
         Score = score;
     }
 
+    /// <summary>
+    /// Null ですか？
+    /// </summary>
     public bool IsNull => string.IsNullOrEmpty(UserUniqueID);
+    /// <summary>
+    /// Null の値を返す。
+    /// </summary>
     public static UserInfoData Null => new UserInfoData(null, null, DateTime.MinValue, Gender.Female, 0);
 
     public override string ToString()

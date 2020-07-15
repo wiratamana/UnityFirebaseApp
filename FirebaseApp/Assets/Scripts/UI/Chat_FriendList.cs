@@ -35,6 +35,9 @@ public class Chat_FriendList : MonoBehaviour
         Home.Instance.toChat.TransitionCompleted += InstantaiteUserInfo;
     }
 
+    /// <summary>
+    /// ホーム画面に戻る。
+    /// </summary>
     [Utils.InvokeByUnity]
     public void OnClick_Back()
     {

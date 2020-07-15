@@ -85,6 +85,9 @@ public static class Utils
     [AttributeUsage(AttributeTargets.Method)]
     public class InvokeByUnity : Attribute { }
 
+    /// <summary>
+    /// Unity の EventSystems から継承したメソッドのマークです。
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class InheritedByUnityInterface : Attribute { } 
 }
